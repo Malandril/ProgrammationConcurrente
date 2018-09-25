@@ -16,18 +16,14 @@ func main() {
 func primeNumbers() chan int {
 	out := make(chan int)
 	go func() {
-		strings := generateNumbers()
-		crible(strings, out)
+		numbers := generateNumbers()
+		crible(numbers, out)
 	}()
 	return out
 }
 
 func crible(numbers chan int, out chan int) {
-	p, ok := <-numbers
-	if !ok {
-		close(out)
-		return
-	}
+	p := <-numbers
 	out <- p
 	primes := make(chan int)
 	go func() {
@@ -43,7 +39,7 @@ func crible(numbers chan int, out chan int) {
 func generateNumbers() chan int {
 	c := make(chan int)
 	go func() {
-		for i := 2;; i++ {
+		for i := 2; ; i++ {
 			c <- i
 		}
 		close(c)
