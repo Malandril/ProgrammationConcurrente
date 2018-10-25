@@ -26,7 +26,7 @@ func printIncoming(conn net.Conn) func() {
 		for {
 			line, err := reader.ReadString('\n')
 			checkError(err)
-			fmt.Printf("Received: %s\n", line)
+			fmt.Printf("%s", line)
 		}
 	}
 }
