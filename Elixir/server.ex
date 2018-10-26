@@ -31,6 +31,12 @@ defmodule Server do
         send(sender, {:send_message, "#{name}: #{message}"})
         listen_client(socket, sender, name)
 
+      {:error, :timeout} ->
+        send(sender, {:disconnect, socket})
+        :gen_tcp.send(socket, "You timed out\n")
+        :gen_tcp.close(socket)
+        send(sender, {:send_message, "#{name} timed out\n"})
+
       {:error, _} ->
         send(sender, {:disconnect, socket})
         :gen_tcp.close(socket)
