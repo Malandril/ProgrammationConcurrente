@@ -28,14 +28,18 @@ defmodule Server do
     # Timeout of 10 seconds
     case :gen_tcp.recv(socket, 0, 10000) do
       {:ok, message} ->
-        send(sender, {:send_message, "#{name}: #{message}"})
+        message = "#{name}: #{message}"
+        Log.message(message)
+        send(sender, {:send_message, message})
         listen_client(socket, sender, name)
 
       {:error, :timeout} ->
         send(sender, {:disconnect, socket})
         :gen_tcp.send(socket, "You timed out\n")
         :gen_tcp.close(socket)
-        send(sender, {:send_message, "#{name} timed out\n"})
+        message = "#{name} timed out\n"
+        Log.message(message)
+        send(sender, {:send_message, message})
 
       {:error, _} ->
         send(sender, {:disconnect, socket})
@@ -63,9 +67,6 @@ defmodule Server do
 
       {:disconnect, socket} ->
         message_sender(List.delete(clients, socket))
-
-      {:stop, reason} ->
-        exit(reason)
     end
   end
 
